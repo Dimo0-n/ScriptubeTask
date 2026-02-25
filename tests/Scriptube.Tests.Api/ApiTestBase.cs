@@ -1,0 +1,152 @@
+using System.Text.Json;
+using FluentAssertions;
+using Scriptube.Core.Configuration;
+using Scriptube.Core.Http;
+using Scriptube.Core.Logging;
+using Scriptube.Tests.Shared;
+
+namespace Scriptube.Tests.Api;
+
+public abstract class ApiTestBase : ScriptubeTestBase
+{
+    protected void RequireLiveApi()
+    {
+        if (!string.Equals(Environment.GetEnvironmentVariable("RUN_LIVE_SCRIPTUBE"), "true", StringComparison.OrdinalIgnoreCase))
+        {
+            Assert.Ignore("Set RUN_LIVE_SCRIPTUBE=true to run live Scriptube API tests.");
+        }
+    }
+
+    protected string RequireApiKey()
+    {
+        var apiKey = Environment.GetEnvironmentVariable("SCRIPTUBE_API_KEY");
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            Assert.Ignore("Set SCRIPTUBE_API_KEY to run authenticated API tests.");
+        }
+
+        return apiKey;
+    }
+
+    protected HttpClient CreateAuthenticatedClient()
+    {
+        var apiKey = RequireApiKey();
+        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = apiKey }, new NullRequestLogSink());
+    }
+
+    protected HttpClient CreateClientWithoutApiKey()
+    {
+        var client = ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = null }, new NullRequestLogSink());
+        client.DefaultRequestHeaders.Remove("X-API-Key");
+        return client;
+    }
+
+    protected HttpClient CreateClientWithInvalidApiKey()
+    {
+        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = "invalid_api_key_value" }, new NullRequestLogSink());
+    }
+
+    protected static async Task<JsonDocument> ReadJsonAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
+    {
+        var payload = await response.Content.ReadAsStringAsync(cancellationToken);
+        return JsonDocument.Parse(payload);
+    }
+
+    protected static string TryGetBatchId(JsonDocument document)
+    {
+        var batchId = FindStringProperty(document.RootElement, "batch_id")
+                      ?? FindStringProperty(document.RootElement, "id");
+
+        batchId.Should().NotBeNullOrWhiteSpace("submit response should include a batch id");
+        return batchId!;
+    }
+
+    protected static decimal TryGetBalance(JsonDocument document)
+    {
+        if (TryGetDecimalProperty(document.RootElement, "balance", out var balance))
+        {
+            return balance;
+        }
+
+        if (document.RootElement.TryGetProperty("credits", out var creditsElement) &&
+            TryGetDecimalProperty(creditsElement, "balance", out var nestedBalance))
+        {
+            return nestedBalance;
+        }
+
+        throw new AssertionException("Balance field was not found in credits response payload.");
+    }
+
+    protected static void IgnoreIfEndpointUnavailable(HttpResponseMessage response, string endpoint)
+    {
+        if (response.StatusCode is System.Net.HttpStatusCode.NotFound or System.Net.HttpStatusCode.MethodNotAllowed)
+        {
+            Assert.Ignore($"Endpoint '{endpoint}' is not available in this Scriptube deployment version.");
+        }
+    }
+
+    private static string? FindStringProperty(JsonElement root, string propertyName)
+    {
+        if (root.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in root.EnumerateObject())
+            {
+                if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase) &&
+                    property.Value.ValueKind == JsonValueKind.String)
+                {
+                    return property.Value.GetString();
+                }
+
+                var nested = FindStringProperty(property.Value, propertyName);
+                if (!string.IsNullOrWhiteSpace(nested))
+                {
+                    return nested;
+                }
+            }
+        }
+
+        if (root.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in root.EnumerateArray())
+            {
+                var nested = FindStringProperty(item, propertyName);
+                if (!string.IsNullOrWhiteSpace(nested))
+                {
+                    return nested;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryGetDecimalProperty(JsonElement element, string propertyName, out decimal value)
+    {
+        value = default;
+        if (!element.TryGetProperty(propertyName, out var property))
+        {
+            return false;
+        }
+
+        if (property.ValueKind == JsonValueKind.Number && property.TryGetDecimal(out var numeric))
+        {
+            value = numeric;
+            return true;
+        }
+
+        if (property.ValueKind == JsonValueKind.String && decimal.TryParse(property.GetString(), out var parsed))
+        {
+            value = parsed;
+            return true;
+        }
+
+        return false;
+    }
+
+    private sealed class NullRequestLogSink : IRequestLogSink
+    {
+        public void Write(string content)
+        {
+        }
+    }
+}
