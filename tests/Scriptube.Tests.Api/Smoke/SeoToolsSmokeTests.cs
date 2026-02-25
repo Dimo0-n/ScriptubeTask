@@ -29,7 +29,7 @@ public sealed class SeoToolsSmokeTests : ApiTestBase
         using var httpClient = CreateClientWithoutApiKey();
 
         var client = new SeoToolsClient(httpClient);
-        using var response = await client.GetYoutubeTranscriptAsync("https://www.youtube.com/watch?v=tstENMAN001");
+        using var response = await client.GetYoutubeTranscriptAsync(TestDataCatalog.SuccessVideos.EnglishManual);
 
         response.IsSuccessStatusCode.Should().BeTrue();
     }

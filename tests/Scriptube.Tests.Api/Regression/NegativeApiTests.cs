@@ -77,4 +77,18 @@ public sealed class NegativeApiTests : ApiTestBase
         using var response = await transcriptsClient.GetBatchAsync("batch-does-not-exist");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+
+    [Test]
+    public async Task AnotherUsersBatchId_Should_ReturnNotFound()
+    {
+        RequireLiveApi();
+
+        var foreignBatchId = RequireForeignBatchIdOrIgnore();
+
+        using var client = CreateAuthenticatedClient();
+        var transcriptsClient = new TranscriptsClient(client);
+
+        using var response = await transcriptsClient.GetBatchAsync(foreignBatchId);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }

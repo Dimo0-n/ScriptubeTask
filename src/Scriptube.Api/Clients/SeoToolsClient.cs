@@ -1,6 +1,3 @@
-using System.Net.Http.Json;
-using Scriptube.Api.Contracts;
-
 namespace Scriptube.Api.Clients;
 
 public sealed class SeoToolsClient
@@ -14,11 +11,11 @@ public sealed class SeoToolsClient
 
     public async Task<HttpResponseMessage> GetYoutubeTranscriptAsync(string videoUrl, CancellationToken cancellationToken = default)
     {
-        var request = new SeoToolsYoutubeTranscriptRequest
-        {
-            Url = videoUrl
-        };
+        using var content = new FormUrlEncodedContent(
+        [
+            new KeyValuePair<string, string>("url", videoUrl)
+        ]);
 
-        return await _httpClient.PostAsJsonAsync("/tools/youtube-transcript", request, cancellationToken);
+        return await _httpClient.PostAsync("/tools/youtube-transcript", content, cancellationToken);
     }
 }

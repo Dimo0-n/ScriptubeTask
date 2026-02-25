@@ -77,6 +77,45 @@ public abstract class ApiTestBase : ScriptubeTestBase
         throw new AssertionException("Balance field was not found in credits response payload.");
     }
 
+    protected static string TryGetStatus(JsonDocument document)
+    {
+        var status = FindStringProperty(document.RootElement, "status");
+        status.Should().NotBeNullOrWhiteSpace("payload should contain a status field");
+        return status!;
+    }
+
+    protected static int TryCountItemsWithStatus(JsonDocument document, string expectedStatus)
+    {
+        if (!TryFindProperty(document.RootElement, "items", out var itemsElement) || itemsElement.ValueKind != JsonValueKind.Array)
+        {
+            return 0;
+        }
+
+        var count = 0;
+        foreach (var item in itemsElement.EnumerateArray())
+        {
+            if (TryFindProperty(item, "status", out var statusElement) &&
+                statusElement.ValueKind == JsonValueKind.String &&
+                string.Equals(statusElement.GetString(), expectedStatus, StringComparison.OrdinalIgnoreCase))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    protected static string RequireForeignBatchIdOrIgnore()
+    {
+        var foreignBatchId = Environment.GetEnvironmentVariable("SCRIPTUBE_FOREIGN_BATCH_ID");
+        if (string.IsNullOrWhiteSpace(foreignBatchId))
+        {
+            Assert.Ignore("Set SCRIPTUBE_FOREIGN_BATCH_ID to validate 'other user batch => 404' negative scenario.");
+        }
+
+        return foreignBatchId;
+    }
+
     protected static void IgnoreIfEndpointUnavailable(HttpResponseMessage response, string endpoint)
     {
         if (response.StatusCode is System.Net.HttpStatusCode.NotFound or System.Net.HttpStatusCode.MethodNotAllowed)
@@ -118,6 +157,40 @@ public abstract class ApiTestBase : ScriptubeTestBase
         }
 
         return null;
+    }
+
+    private static bool TryFindProperty(JsonElement root, string propertyName, out JsonElement value)
+    {
+        if (root.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in root.EnumerateObject())
+            {
+                if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = property.Value;
+                    return true;
+                }
+
+                if (TryFindProperty(property.Value, propertyName, out value))
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (root.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in root.EnumerateArray())
+            {
+                if (TryFindProperty(item, propertyName, out value))
+                {
+                    return true;
+                }
+            }
+        }
+
+        value = default;
+        return false;
     }
 
     private static bool TryGetDecimalProperty(JsonElement element, string propertyName, out decimal value)
