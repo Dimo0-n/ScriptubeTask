@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Allure.NUnit" Version="2.12.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="FluentAssertions" Version="8.2.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.54.0" />
+    <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.54.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit.Analyzers" Version="4.7.0" />
@@ -18,6 +22,12 @@
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Scriptube.Ui\Scriptube.Ui.csproj" />
+    <ProjectReference Include="..\..\src\Scriptube.Core\Scriptube.Core.csproj" />
+    <ProjectReference Include="..\Scriptube.Tests.Shared\Scriptube.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

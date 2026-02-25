@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Scriptube.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+62deae1d7b2155a3b2ac664a51282ad478b5b2c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1cfbc4a5bf279926c38e03f43406924abe8e6d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Scriptube.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Scriptube.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
