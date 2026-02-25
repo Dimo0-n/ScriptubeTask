@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriptube.Tests", "Scriptube.Tests.csproj", "{DB0784DB-7EC8-505A-E4AC-601F70EA95CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB0784DB-7EC8-505A-E4AC-601F70EA95CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB0784DB-7EC8-505A-E4AC-601F70EA95CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB0784DB-7EC8-505A-E4AC-601F70EA95CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB0784DB-7EC8-505A-E4AC-601F70EA95CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6BCCC4B-7403-418A-999B-A6F95073F80F}
+	EndGlobalSection
+EndGlobal
