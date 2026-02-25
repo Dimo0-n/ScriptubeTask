@@ -63,6 +63,11 @@ public abstract class ApiTestBase : ScriptubeTestBase
 
     protected static decimal TryGetBalance(JsonDocument document)
     {
+        if (TryGetDecimalProperty(document.RootElement, "credits_balance", out var creditsBalance))
+        {
+            return creditsBalance;
+        }
+
         if (TryGetDecimalProperty(document.RootElement, "balance", out var balance))
         {
             return balance;

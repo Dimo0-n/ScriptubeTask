@@ -74,7 +74,7 @@ public sealed class NegativeApiTests : ApiTestBase
         using var client = CreateAuthenticatedClient();
         var transcriptsClient = new TranscriptsClient(client);
 
-        using var response = await transcriptsClient.GetBatchAsync("batch-does-not-exist");
+        using var response = await transcriptsClient.GetBatchAsync("00000000-0000-0000-0000-000000000000");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 

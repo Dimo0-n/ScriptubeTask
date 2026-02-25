@@ -9,6 +9,7 @@ public abstract class ScriptubeTestBase
     [SetUp]
     public void BaseSetUp()
     {
+        DotEnvLoader.LoadFromWorkspaceRoot();
         Settings = ScriptubeSettingsLoader.Load();
     }
 }
