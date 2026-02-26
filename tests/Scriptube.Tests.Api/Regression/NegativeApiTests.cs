@@ -33,9 +33,16 @@ public sealed class NegativeApiTests : ApiTestBase
 
         using var client = CreateClientWithInvalidApiKey();
         var userClient = new UserClient(client);
+        var creditsClient = new CreditsClient(client);
+        var transcriptsClient = new TranscriptsClient(client);
 
         using var userResponse = await userClient.GetAsync();
+        using var creditsResponse = await creditsClient.GetBalanceAsync();
+        using var transcriptsResponse = await transcriptsClient.ListAsync();
+
         userResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        creditsResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        transcriptsResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Test]
