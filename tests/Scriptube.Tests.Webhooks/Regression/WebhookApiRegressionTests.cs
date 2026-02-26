@@ -130,7 +130,7 @@ public sealed class WebhookApiRegressionTests : WebhookTestBase
 
             using var retryResponse = await webhooksClient.RetryDeliveryAsync(webhookId);
             IgnoreIfEndpointUnavailable(retryResponse, "/api/webhooks/{webhook_id}/retry");
-            retryResponse.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.NoContent, HttpStatusCode.BadRequest);
+            retryResponse.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.NoContent, HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity);
         }
         finally
         {

@@ -243,7 +243,7 @@ Scenarii:
 
 Tagging: `[Category("UI")]` + `Smoke/Regression` după criticitate.
 
-[In Proces]
+[Creat]
 ## 7.4 Webhooks
 
 Scenarii:
@@ -368,7 +368,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 [In Proces]
 ## Ziua 4 — UI E2E + hardening
-- [In Proces] Implementare Page Objects și flow-uri UI din task.
+- [Creat] Implementare Page Objects și flow-uri UI din task.
 - [Creat] Screenshot la fail, trace opțional.
 - [Creat] Tagging complet Smoke/Regression/Area.
 - [In Proces] Reducere flaky și optimizare waits.
