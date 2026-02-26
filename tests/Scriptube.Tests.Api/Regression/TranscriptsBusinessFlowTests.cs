@@ -41,6 +41,7 @@ public sealed class TranscriptsBusinessFlowTests : ApiTestBase
         }
 
         var pollingResult = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(pollingResult);
         pollingResult.FinalStatus.Should().Be("completed");
 
         using var exportJsonResponse = await transcriptsClient.ExportAsync(batchId, "json");
@@ -84,6 +85,7 @@ public sealed class TranscriptsBusinessFlowTests : ApiTestBase
         }
 
         var pollingResult = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(pollingResult);
         pollingResult.FinalStatus.Should().Be("completed");
 
         decimal afterBalance;
@@ -169,6 +171,7 @@ public sealed class TranscriptsBusinessFlowTests : ApiTestBase
         }
 
         var pollResult = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(pollResult);
         pollResult.FinalStatus.Should().Be("completed");
     }
 
@@ -196,6 +199,7 @@ public sealed class TranscriptsBusinessFlowTests : ApiTestBase
         }
 
         var result = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(result);
         result.FinalStatus.Should().BeOneOf("completed", "failed");
     }
 }

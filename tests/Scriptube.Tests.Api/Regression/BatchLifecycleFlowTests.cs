@@ -42,6 +42,7 @@ public sealed class BatchLifecycleFlowTests : ApiTestBase
         }
 
         var finalResult = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(finalResult);
         finalResult.FinalStatus.Should().BeOneOf("cancelled", "canceled", "completed");
     }
 
@@ -68,6 +69,7 @@ public sealed class BatchLifecycleFlowTests : ApiTestBase
         }
 
         var initialResult = await pollingService.WaitForFinalStatusAsync(batchId);
+        AttachPollingArtifacts(initialResult);
         initialResult.FinalStatus.Should().BeOneOf("failed", "completed");
 
         using (var batchStateResponse = await transcriptsClient.GetBatchAsync(batchId))

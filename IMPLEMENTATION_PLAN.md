@@ -1,5 +1,6 @@
 # Plan de implementare detaliat — Scriptube Test Automation Framework
 
+[In Proces]
 ## 1) Scop și rezultat urmărit
 
 Acest plan definește implementarea unui framework de automatizare în **C# / .NET 8+** pentru Scriptube, cu acoperire pe:
@@ -11,6 +12,7 @@ Rezultatul final: un repo gata de rulare locală și în GitHub Actions, cu rapo
 
 ---
 
+[Creat]
 ## 2) Principii arhitecturale
 
 - **Separare clară a responsabilităților**: teste, clienți API, modele, utilitare, config.
@@ -21,6 +23,7 @@ Rezultatul final: un repo gata de rulare locală și în GitHub Actions, cu rapo
 
 ---
 
+[Creat]
 ## 3) Structura soluției propuse
 
 > Se păstrează soluția existentă și se extinde în proiecte/foldere clare.
@@ -72,6 +75,7 @@ Scriptube.Tests.sln
 
 ---
 
+[In Proces]
 ## 4) Stack tehnic și pachete NuGet
 
 - **Test runner**: NUnit (alegere recomandată pentru categorii `[Category]`)
@@ -93,6 +97,7 @@ Pachete minime:
 
 ---
 
+[Creat]
 ## 5) Configurare medii și secrete
 
 ### Fișiere config
@@ -121,8 +126,10 @@ Pachete minime:
 
 ---
 
+[In Proces]
 ## 6) Design intern framework
 
+[Creat]
 ## 6.1 Layer Core
 - `ConfigurationProvider`: încarcă config JSON + env vars.
 - `ApiContext`: furnizează `HttpClient`, timeouts, header auth (`X-API-Key`).
@@ -130,6 +137,7 @@ Pachete minime:
 - `RetryPolicyFactory`: creează politici Polly configurabile.
 - `AllureAttachmentHelper`: atașează request/response, payload-uri, screenshot-uri.
 
+[Creat]
 ## 6.2 Layer API
 - Câte un client per agregat:
   - `TranscriptsClient`
@@ -142,6 +150,7 @@ Pachete minime:
 - `RequestBuilder` pentru payload-uri transcript/precheck/estimate.
 - `BatchPollingService` pentru `GET /transcripts/{batch_id}` până la stare finală.
 
+[Urmeaza]
 ## 6.3 Layer UI (POM)
 - Page Objects:
   - `LoginPage`
@@ -153,6 +162,7 @@ Pachete minime:
 - `UiFlow` wrappers pentru scenarii complete (ex. login + submit batch).
 - Screenshot automat la fail în teardown.
 
+[Urmeaza]
 ## 6.4 Layer Webhooks
 - `WebhookRegistrationClient`
 - `WebhookDeliveryVerifier`
@@ -161,8 +171,10 @@ Pachete minime:
 
 ---
 
+[In Proces]
 ## 7) Acoperire teste — plan detaliat
 
+[Creat]
 ## 7.1 API — Smoke suite (rapidă)
 1. `POST /tools/youtube-transcript` fără auth (happy path)
 2. `GET /api/v1/user` cu API key valid
@@ -175,6 +187,7 @@ Pachete minime:
 
 Tagging: `[Category("API")][Category("Smoke")]`
 
+[Creat]
 ## 7.2 API — Regression suite (completă)
 
 ### Endpoints obligatorii
@@ -214,6 +227,7 @@ Tagging: `[Category("API")][Category("Smoke")]`
 
 Tagging: `[Category("API")][Category("Regression")]`
 
+[Urmeaza]
 ## 7.3 UI E2E — Chromium only
 
 Scenarii:
@@ -229,6 +243,7 @@ Scenarii:
 
 Tagging: `[Category("UI")]` + `Smoke/Regression` după criticitate.
 
+[Urmeaza]
 ## 7.4 Webhooks
 
 Scenarii:
@@ -245,6 +260,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[Creat]
 ## 8) Date de test și management date
 
 - Se folosesc exclusiv URL-urile `tst*` din task.
@@ -257,6 +273,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[In Proces]
 ## 9) Logging și raportare (Allure)
 
 ## 9.1 Ce se atașează per test
@@ -274,6 +291,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[Urmeaza]
 ## 10) CI/CD — GitHub Actions
 
 ## 10.1 Trigger-e
@@ -304,6 +322,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[Creat]
 ## 11) Stabilitate și retry
 
 - Retry strict configurabil doar pe erori tranziente (timeouts, 5xx, network hiccups).
@@ -313,6 +332,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[Creat]
 ## 12) Securitate & conformitate
 
 - Masking API key în toate log-urile.
@@ -322,32 +342,38 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[In Proces]
 ## 13) Roadmap de implementare (5 zile lucrătoare)
 
+[Creat]
 ## Ziua 1 — Fundament framework
 - Curățare proiect inițial + structură foldere/proiecte.
 - Adăugare pachete NuGet, config loading, secret loading.
 - Implementare HttpClient wrapper + logging + masking.
 - Setup Allure și fixture de bază pentru teste.
 
+[Creat]
 ## Ziua 2 — API core + smoke
 - Implementare clienți API principali.
 - Implementare builders + polling service.
 - Implementare smoke suite API + primele negative.
 - Validare locală + stabilizare.
 
+[In Proces]
 ## Ziua 3 — API regression + Webhooks
-- Completare endpoint-uri API restante.
-- Fluxuri cancel/retry/rerun/delete.
+- [Creat] Completare endpoint-uri API restante.
+- [Creat] Fluxuri cancel/retry/rerun/delete.
 - Implementare webhook registration/test/logs.
 - Implementare verificare HMAC + SSRF negative.
 
+[Urmeaza]
 ## Ziua 4 — UI E2E + hardening
 - Implementare Page Objects și flow-uri UI din task.
 - Screenshot la fail, trace opțional.
 - Tagging complet Smoke/Regression/Area.
 - Reducere flaky și optimizare waits.
 
+[Urmeaza]
 ## Ziua 5 — CI/CD + documentație finală
 - Workflow complet parametrizat (area/suite/threads).
 - Publicare Allure în GitHub Pages.
@@ -356,6 +382,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
+[Urmeaza]
 ## 14) Definiție de Done (DoD)
 
 Un item este „Done” când:
@@ -369,6 +396,7 @@ Un item este „Done” când:
 
 ---
 
+[Creat]
 ## 15) Riscuri și mitigare
 
 1. **Flaky UI din cauza sincronizării**
@@ -385,6 +413,7 @@ Un item este „Done” când:
 
 ---
 
+[Urmeaza]
 ## 16) Extensii bonus (după MVP)
 
 - 2-3 scenarii Reqnroll/SpecFlow pentru demonstrat BDD.
@@ -393,6 +422,7 @@ Un item este „Done” când:
 
 ---
 
+[Creat]
 ## 17) Prioritizare MVP
 
 Dacă timpul devine limitat, ordinea minimă de livrare:

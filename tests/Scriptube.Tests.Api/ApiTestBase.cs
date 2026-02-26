@@ -1,14 +1,33 @@
 using System.Text.Json;
 using FluentAssertions;
+using Scriptube.Api.Services;
 using Scriptube.Core.Configuration;
 using Scriptube.Core.Http;
-using Scriptube.Core.Logging;
 using Scriptube.Tests.Shared;
 
 namespace Scriptube.Tests.Api;
 
 public abstract class ApiTestBase : ScriptubeTestBase
 {
+    private HttpLogCollector _logCollector = default!;
+
+    [SetUp]
+    public void ApiSetUp()
+    {
+        _logCollector = new HttpLogCollector();
+    }
+
+    [TearDown]
+    public void ApiTearDown()
+    {
+        if (_logCollector.HasEntries)
+        {
+            var testName = TestContext.CurrentContext.Test.Name;
+            var fileName = $"{testName}-{DateTime.UtcNow:yyyyMMddHHmmssfff}.http.log.txt";
+            HttpLogAttachmentHelper.AttachToCurrentTest(fileName, _logCollector.GetCombinedLog());
+        }
+    }
+
     protected void RequireLiveApi()
     {
         if (!string.Equals(Environment.GetEnvironmentVariable("RUN_LIVE_SCRIPTUBE"), "true", StringComparison.OrdinalIgnoreCase))
@@ -31,19 +50,19 @@ public abstract class ApiTestBase : ScriptubeTestBase
     protected HttpClient CreateAuthenticatedClient()
     {
         var apiKey = RequireApiKey();
-        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = apiKey }, new NullRequestLogSink());
+        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = apiKey }, _logCollector);
     }
 
     protected HttpClient CreateClientWithoutApiKey()
     {
-        var client = ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = null }, new NullRequestLogSink());
+        var client = ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = null }, _logCollector);
         client.DefaultRequestHeaders.Remove("X-API-Key");
         return client;
     }
 
     protected HttpClient CreateClientWithInvalidApiKey()
     {
-        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = "invalid_api_key_value" }, new NullRequestLogSink());
+        return ApiContext.CreateClient(Settings, new ApiAuthenticationOptions { ApiKey = "invalid_api_key_value" }, _logCollector);
     }
 
     protected static async Task<JsonDocument> ReadJsonAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
@@ -127,6 +146,13 @@ public abstract class ApiTestBase : ScriptubeTestBase
         {
             Assert.Ignore($"Endpoint '{endpoint}' is not available in this Scriptube deployment version.");
         }
+    }
+
+    protected static void AttachPollingArtifacts(BatchPollingResult result)
+    {
+        var timeline = string.Join(Environment.NewLine, result.StatusTimeline.Select((status, index) => $"{index + 1}. {status}"));
+        AllureAttachmentHelper.AttachText($"polling-timeline-{result.BatchId}", timeline);
+        AllureAttachmentHelper.AttachText($"polling-final-payload-{result.BatchId}", result.FinalPayloadJson);
     }
 
     private static string? FindStringProperty(JsonElement root, string propertyName)
@@ -221,10 +247,4 @@ public abstract class ApiTestBase : ScriptubeTestBase
         return false;
     }
 
-    private sealed class NullRequestLogSink : IRequestLogSink
-    {
-        public void Write(string content)
-        {
-        }
-    }
 }
