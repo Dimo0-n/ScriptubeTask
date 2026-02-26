@@ -1,0 +1,1310 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — Scriptube</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="icon" type="image/png" href="/static/favicon-32x32.png">
+
+  <!-- Performance: Preconnect to external resources -->
+  
+  <link rel="preconnect" href="https://scriptube.me/umami">
+  <link rel="dns-prefetch" href="https://scriptube.me/umami">
+  
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Extract YouTube transcripts instantly. Free YouTube transcript extractor with batch processing, rich metadata, and multiple export formats. No API keys required.">
+  <meta name="keywords" content="youtube transcript, youtube transcript extractor, video transcript, youtube captions, batch transcript, youtube api, transcript download">
+  <link rel="canonical" href="http://scriptube.me/ui/login">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://scriptube.me/ui/login">
+  <meta property="og:title" content="Scriptube">
+  <meta property="og:description" content="Extract YouTube transcripts instantly. Free YouTube transcript extractor with batch processing, rich metadata, and multiple export formats.">
+  <meta property="og:image" content="https://scriptube.me/static/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="http://scriptube.me/ui/login">
+  <meta name="twitter:title" content="Scriptube">
+  <meta name="twitter:description" content="Extract YouTube transcripts instantly. Free YouTube transcript extractor with batch processing, rich metadata, and multiple export formats.">
+  <meta name="twitter:image" content="https://scriptube.me/static/og-image.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242838;
+      --border: #2e3348;
+      --text: #e2e4eb;
+      --text-dim: #8b8fa3;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --red: #ef4444;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --radius: 8px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-content {
+      flex: 1;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 56px;
+      position: relative;
+      gap: 16px;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 101;
+      flex-shrink: 0;
+    }
+    .navbar-brand .logo {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fff;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .navbar-links a {
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .navbar-links a:hover {
+      color: var(--accent-hover);
+    }
+    .navbar-links a.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .navbar-links .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    .credit-balance-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .credit-balance-badge:hover {
+      background: var(--surface);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .credit-balance-badge .credit-icon {
+      font-size: 14px;
+    }
+    .credit-balance-badge .credit-amount {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .credit-balance-badge .credit-label {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+    /* Dropdown menu */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-toggle {
+      cursor: pointer;
+      user-select: none;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:hover {
+      background: var(--surface2);
+      color: var(--accent-hover);
+    }
+    /* User dropdown */
+    .user-dropdown {
+      position: relative;
+    }
+    .user-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .user-dropdown-toggle:hover {
+      border-color: var(--accent);
+    }
+    .user-email-short {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .dropdown-arrow {
+      transition: transform 0.2s;
+    }
+    .user-dropdown.open .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+    .user-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-width: 220px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .user-dropdown.open .user-dropdown-menu {
+      display: block;
+    }
+    .dropdown-user-info {
+      padding: 12px 16px;
+      background: var(--surface2);
+    }
+    .dropdown-email {
+      font-size: 13px;
+      color: var(--text-dim);
+      word-break: break-all;
+    }
+    .dropdown-divider {
+      margin: 0;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .dropdown-item:hover {
+      background: var(--surface2);
+    }
+    .dropdown-item-danger {
+      color: var(--red);
+    }
+    .dropdown-item-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .dropdown-item-disabled {
+      color: var(--text-dim);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .dropdown-item-disabled:hover {
+      background: transparent;
+    }
+    .dropdown-item-disabled small {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 101;
+      background: transparent;
+      border: none;
+    }
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: all 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+      min-height: 44px;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); color: #fff; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--text-dim); color: var(--text); }
+    .btn-sm { padding: 6px 12px; font-size: 13px; min-height: 36px; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #dc2626; color: #fff; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-dim);
+    }
+    .form-group { margin-bottom: 16px; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-pending { background: rgba(234,179,8,0.15); color: var(--yellow); }
+    .badge-processing { background: rgba(99,102,241,0.15); color: var(--accent); }
+    .badge-completed { background: rgba(34,197,94,0.15); color: var(--green); }
+    .badge-failed { background: rgba(239,68,68,0.15); color: var(--red); }
+    .badge-cancelled { background: rgba(249,115,22,0.15); color: var(--orange); }
+
+    /* Plan badges */
+    .badge-plan {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-plan.free { background: rgba(139,143,163,0.15); color: var(--text-dim); }
+    .badge-plan.starter { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .badge-plan.pro { background: rgba(99,102,241,0.15); color: var(--accent); }
+    .badge-plan.business { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-plan.unlimited { background: rgba(236,72,153,0.15); color: #f472b6; }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 600px;
+    }
+    th {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      font-weight: 500;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    .transcript-preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      max-height: 200px;
+      overflow-y: auto;
+      color: var(--text-dim);
+      white-space: pre-wrap;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+    .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
+    .alert-warning { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: var(--yellow); }
+
+    .auth-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+      padding: 32px;
+    }
+    .auth-card h1 { text-align: center; margin-bottom: 4px; }
+    .auth-card .subtitle { text-align: center; }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .meta-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .meta-item .meta-label { font-size: 12px; color: var(--text-dim); }
+    .meta-item .meta-value { font-size: 16px; font-weight: 600; }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-dim);
+    }
+    .empty-state h3 { font-size: 16px; margin-bottom: 8px; color: var(--text); }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Landing page specific responsive styles */
+    @media (max-width: 768px) {
+      section h1 {
+        font-size: 32px !important;
+      }
+      section h2 {
+        font-size: 24px !important;
+      }
+      section p {
+        font-size: 16px !important;
+      }
+      section {
+        padding: 40px 0 30px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      section h1 {
+        font-size: 28px !important;
+      }
+      section h2 {
+        font-size: 20px !important;
+      }
+      section p {
+        font-size: 14px !important;
+      }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 16px;
+      }
+      .navbar-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--surface);
+        border-left: 1px solid var(--border);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 24px 24px 24px;
+        gap: 8px;
+        transition: right 0.3s ease;
+        z-index: 100;
+        overflow-y: auto;
+      }
+      .navbar-links.active {
+        right: 0;
+      }
+      .navbar-links a,
+      .navbar-links .user-email,
+      .navbar-links .badge,
+      .navbar-links form {
+        width: 100%;
+      }
+      .navbar-links a {
+        padding: 12px;
+        border-radius: 6px;
+        display: block;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+      }
+      .navbar-links a:hover {
+        background: var(--surface2);
+      }
+      .navbar-links .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .navbar-links .dropdown {
+        width: 100%;
+      }
+      .navbar-links .dropdown-toggle {
+        width: 100%;
+        display: block;
+      }
+      .navbar-links .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        border: none;
+        background: var(--surface2);
+        margin-top: 4px;
+        margin-left: 12px;
+      }
+      .navbar-links .user-badge {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+        gap: 4px;
+      }
+      .hamburger {
+        display: flex;
+      }
+      .container {
+        padding: 16px;
+        max-width: 100%;
+      }
+      .card {
+        padding: 16px;
+      }
+      .meta-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      h2 {
+        font-size: 16px;
+      }
+      .auth-card {
+        padding: 24px;
+        margin: 16px;
+      }
+      body {
+        font-size: 16px;
+      }
+      table {
+        font-size: 13px;
+      }
+      th, td {
+        padding: 8px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0 12px;
+      }
+      .navbar-brand {
+        font-size: 16px;
+      }
+      .navbar-brand .logo {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+      .container {
+        padding: 12px;
+      }
+      .card {
+        padding: 12px;
+      }
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn {
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+      .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+    }
+
+    /* Overlay for mobile menu */
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+    .nav-overlay.active {
+      display: block;
+    }
+
+    /* Toast notification system */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 400px;
+    }
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+      min-width: 280px;
+      position: relative;
+    }
+    .toast.success {
+      border-left: 4px solid var(--green);
+      background: rgba(46, 204, 113, 0.1);
+    }
+    .toast.error {
+      border-left: 4px solid var(--red);
+      background: rgba(231, 76, 60, 0.1);
+    }
+    .toast.warning {
+      border-left: 4px solid var(--yellow);
+      background: rgba(241, 196, 15, 0.1);
+    }
+    .toast.info {
+      border-left: 4px solid var(--accent);
+      background: rgba(52, 152, 219, 0.1);
+    }
+    .toast-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .toast.success .toast-icon { color: var(--green); }
+    .toast.error .toast-icon { color: var(--red); }
+    .toast.warning .toast-icon { color: var(--yellow); }
+    .toast.info .toast-icon { color: var(--accent); }
+    .toast-content {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .toast-close {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .toast-close:hover {
+      color: var(--text);
+    }
+    .toast.hiding {
+      animation: slideOut 0.3s ease forwards;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+    @media (max-width: 480px) {
+      .toast-container {
+        right: 12px;
+        left: 12px;
+        max-width: none;
+      }
+      .toast {
+        min-width: auto;
+      }
+    }
+
+    /* Custom Confirm Modal */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .confirm-overlay.show {
+      opacity: 1;
+    }
+    .confirm-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      transform: scale(0.95) translateY(-10px);
+      transition: transform 0.2s ease;
+    }
+    .confirm-overlay.show .confirm-modal {
+      transform: scale(1) translateY(0);
+    }
+    .confirm-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px 0;
+    }
+    .confirm-icon {
+      font-size: 24px;
+    }
+    .confirm-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+    .confirm-body {
+      padding: 16px 24px;
+    }
+    .confirm-body p {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .confirm-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .confirm-footer .btn {
+      min-width: 90px;
+    }
+
+    /* Navbar Powered By */
+    .navbar-powered {
+      display: none; /* Hidden by default, show on large screens */
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 5px;
+      padding: 5px 10px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 16px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .powered-text {
+      color: var(--text-dim);
+    }
+    .brand-youtube {
+      font-weight: 600;
+      color: #ff0000;
+    }
+    .brand-elevenlabs {
+      font-weight: 600;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .powered-plus {
+      color: var(--text-dim);
+    }
+    @media (min-width: 1200px) {
+      .navbar-powered { display: flex; }
+    }
+  </style>
+  
+
+  <!-- Umami Analytics (self-hosted, GDPR-friendly, no cookies) -->
+  
+  <script async src="https://scriptube.me/umami/script.js" data-website-id="b99c4678-8d8f-4b37-81ca-1a9fb6ed8eda"></script>
+  
+
+  <!-- JSON-LD Structured Data -->
+  
+  <!-- Default Organization schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Scriptube",
+    "url": "https://scriptube.me",
+    "logo": "https://scriptube.me/static/og-image.png",
+    "description": "Extract YouTube transcripts instantly with batch processing, rich metadata, and multiple export formats.",
+    "sameAs": []
+  }
+  </script>
+  <!-- WebSite schema with SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Scriptube",
+    "url": "https://scriptube.me",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://scriptube.me/blog?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+</head>
+<body>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Navigation Macro -->
+  
+
+  
+
+  
+
+  <main class="main-content">
+    
+<div class="auth-page">
+  <div class="card auth-card">
+    <div class="navbar-brand" style="justify-content:center; margin-bottom:24px;">
+      <div class="logo">YT</div>
+      <span>Scriptube</span>
+    </div>
+    <h1>Sign in</h1>
+    <p class="subtitle">Enter your credentials to access your dashboard</p>
+
+    
+
+    <form method="post" action="/ui/login" id="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com" value="">
+        <span class="form-error" id="email-error" style="display:none; color:var(--red); font-size:12px; margin-top:4px;"></span>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Your password" minlength="8">
+        <span class="form-error" id="password-error" style="display:none; color:var(--red); font-size:12px; margin-top:4px;"></span>
+      </div>
+      <div style="text-align:right; margin-bottom:16px;">
+        <a href="/ui/forgot-password" style="font-size:14px; color:var(--primary);">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submit-btn" style="width:100%; justify-content:center; padding:10px;">Sign in</button>
+    </form>
+
+    <script>
+      const form = document.getElementById('login-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      let isSubmitting = false;
+
+      // Form validation
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      emailInput?.addEventListener('blur', function() {
+        if (emailInput.value && !validateEmail(emailInput.value)) {
+          emailInput.style.borderColor = 'var(--red)';
+          emailError.textContent = 'Please enter a valid email';
+          emailError.style.display = 'block';
+        } else {
+          emailInput.style.borderColor = '';
+          emailError.style.display = 'none';
+        }
+      });
+
+      passwordInput?.addEventListener('blur', function() {
+        if (passwordInput.value && passwordInput.value.length < 8) {
+          passwordInput.style.borderColor = 'var(--red)';
+          passwordError.textContent = 'Password must be at least 8 characters';
+          passwordError.style.display = 'block';
+        } else {
+          passwordInput.style.borderColor = '';
+          passwordError.style.display = 'none';
+        }
+      });
+
+      // Clear error on input
+      emailInput?.addEventListener('input', function() {
+        emailInput.style.borderColor = '';
+        emailError.style.display = 'none';
+      });
+
+      passwordInput?.addEventListener('input', function() {
+        passwordInput.style.borderColor = '';
+        passwordError.style.display = 'none';
+      });
+
+      // Handle form submission with loading state and double-submit prevention
+      form?.addEventListener('submit', function(e) {
+        // Prevent double submission
+        if (isSubmitting) {
+          e.preventDefault();
+          return false;
+        }
+
+        // Validate before submit
+        let hasErrors = false;
+
+        if (!validateEmail(emailInput.value)) {
+          emailInput.style.borderColor = 'var(--red)';
+          emailError.textContent = 'Please enter a valid email';
+          emailError.style.display = 'block';
+          hasErrors = true;
+        }
+
+        if (passwordInput.value.length < 8) {
+          passwordInput.style.borderColor = 'var(--red)';
+          passwordError.textContent = 'Password must be at least 8 characters';
+          passwordError.style.display = 'block';
+          hasErrors = true;
+        }
+
+        if (hasErrors) {
+          e.preventDefault();
+          return false;
+        }
+
+        // Set loading state
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><span class="spinner" style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;"></span>Signing in...</span>';
+
+        // Track login event
+        if (window.umami) {
+          umami.track('login');
+        }
+
+        // Re-enable button after 5 seconds as fallback (in case redirect fails)
+        setTimeout(function() {
+          isSubmitting = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign in';
+        }, 5000);
+      });
+    </script>
+
+    <p style="text-align:center; margin-top:16px; font-size:14px; color:var(--text-dim);">
+      Don't have an account? <a href="/ui/signup">Sign up</a>
+    </p>
+    <p style="text-align:center; margin-top:8px; font-size:14px;">
+      <a href="/ui/guide">Learn how it works</a>
+    </p>
+  </div>
+</div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="margin-top: 40px; padding: 24px; border-top: 1px solid var(--border); background: var(--surface); text-align: center;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; color: var(--text-dim); font-size: 13px;">
+      <span>&copy; 2024-2026 Scriptube</span>
+      <span>&middot;</span>
+      <a href="/ui/pricing" style="color: var(--text-dim);">Pricing</a>
+      <span>&middot;</span>
+      <a href="/blog" style="color: var(--text-dim);">Blog</a>
+      <span>&middot;</span>
+      <a href="/ui/feedback" style="color: var(--text-dim);">Feedback</a>
+      
+      <span>&middot;</span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;">
+        Powered by
+        <a href="https://elevenlabs.io" target="_blank" rel="noopener" style="color: var(--accent); display: inline-flex; align-items: center; gap: 4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h2v16H7V4zm8 0h2v16h-2V4z"/></svg>
+          ElevenLabs
+        </a>
+      </span>
+      
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const navLinks = document.getElementById('navbar-links');
+      const overlay = document.getElementById('nav-overlay');
+      const hamburger = document.querySelector('.hamburger');
+      if (navLinks && overlay && hamburger) {
+        navLinks.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('active');
+      }
+    }
+
+    // Dropdown toggle
+    function toggleDropdown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const dropdown = event.target.nextElementSibling;
+      if (dropdown) {
+        dropdown.classList.toggle('show');
+      }
+    }
+
+    // User dropdown toggle
+    function toggleUserDropdown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const dropdown = event.target.closest('.user-dropdown');
+      if (dropdown) {
+        dropdown.classList.toggle('open');
+      }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+      const dropdowns = document.querySelectorAll('.dropdown-menu.show');
+      dropdowns.forEach(function(dropdown) {
+        dropdown.classList.remove('show');
+      });
+      // Close user dropdown
+      const userDropdown = document.querySelector('.user-dropdown.open');
+      if (userDropdown && !userDropdown.contains(event.target)) {
+        userDropdown.classList.remove('open');
+      }
+    });
+
+    // Toast notification system
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      // Icon based on type
+      const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+      };
+
+      // Duration based on type (milliseconds)
+      const durations = {
+        success: 4000,  // 4 seconds
+        error: 8000,    // 8 seconds
+        warning: 6000,  // 6 seconds
+        info: 4000      // 4 seconds
+      };
+
+      toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || icons.info}</div>
+        <div class="toast-content">${message}</div>
+        <button class="toast-close" onclick="closeToast(this)" aria-label="Close">×</button>
+      `;
+
+      container.appendChild(toast);
+
+      // Auto-dismiss based on type duration
+      const duration = durations[type] || 5000;
+      setTimeout(() => {
+        closeToast(toast.querySelector('.toast-close'));
+      }, duration);
+    }
+
+    function closeToast(button) {
+      const toast = button.parentElement || button;
+      toast.classList.add('hiding');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }
+
+    // Custom confirm modal (replaces ugly browser confirm)
+    function showConfirm(message, options = {}) {
+      return new Promise((resolve) => {
+        const title = options.title || 'Confirm';
+        const confirmText = options.confirmText || 'Confirm';
+        const cancelText = options.cancelText || 'Cancel';
+        const type = options.type || 'warning'; // warning, danger, info
+
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.innerHTML = `
+          <div class="confirm-modal">
+            <div class="confirm-header">
+              <span class="confirm-icon">${type === 'danger' ? '⚠️' : type === 'info' ? 'ℹ️' : '🔄'}</span>
+              <h3>${title}</h3>
+            </div>
+            <div class="confirm-body">
+              <p>${message}</p>
+            </div>
+            <div class="confirm-footer">
+              <button class="btn btn-outline confirm-cancel">${cancelText}</button>
+              <button class="btn ${type === 'danger' ? 'btn-danger' : 'btn-primary'} confirm-ok">${confirmText}</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Animate in
+        requestAnimationFrame(() => {
+          overlay.classList.add('show');
+        });
+
+        const closeModal = (result) => {
+          overlay.classList.remove('show');
+          setTimeout(() => overlay.remove(), 200);
+          resolve(result);
+        };
+
+        overlay.querySelector('.confirm-cancel').onclick = () => closeModal(false);
+        overlay.querySelector('.confirm-ok').onclick = () => closeModal(true);
+        overlay.onclick = (e) => { if (e.target === overlay) closeModal(false); };
+
+        // Focus the confirm button
+        overlay.querySelector('.confirm-ok').focus();
+
+        // ESC to cancel
+        const escHandler = (e) => {
+          if (e.key === 'Escape') {
+            document.removeEventListener('keydown', escHandler);
+            closeModal(false);
+          }
+        };
+        document.addEventListener('keydown', escHandler);
+      });
+    }
+
+    // Check URL params for flash messages
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success')) {
+        showToast(params.get('success'), 'success');
+        // Clean URL
+        const url = new URL(window.location);
+        url.searchParams.delete('success');
+        window.history.replaceState({}, '', url);
+      }
+      if (params.get('error')) {
+        showToast(params.get('error'), 'error');
+        const url = new URL(window.location);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, '', url);
+      }
+      if (params.get('warning')) {
+        showToast(params.get('warning'), 'warning');
+        const url = new URL(window.location);
+        url.searchParams.delete('warning');
+        window.history.replaceState({}, '', url);
+      }
+      if (params.get('info')) {
+        showToast(params.get('info'), 'info');
+        const url = new URL(window.location);
+        url.searchParams.delete('info');
+        window.history.replaceState({}, '', url);
+      }
+    });
+
+    // Handle internal link clicks - show toast on 404 instead of navigating
+    document.addEventListener('click', async function(e) {
+      const link = e.target.closest('a');
+      if (!link) return;
+      
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:')) return;
+      
+      // Check if it's an internal link
+      if (href.startsWith('/')) {
+        e.preventDefault();
+        try {
+          const response = await fetch(href, { method: 'HEAD' });
+          if (response.ok) {
+            window.location.href = href;
+          } else if (response.status === 404) {
+            showToast('Page not found. This link may be outdated.', 'error');
+          } else {
+            window.location.href = href;
+          }
+        } catch (err) {
+          window.location.href = href;
+        }
+      }
+    });
+  </script>
+
+  <!-- Analytics tracking -->
+  <script src="/static/js/analytics.js"></script>
+</body>
+</html>

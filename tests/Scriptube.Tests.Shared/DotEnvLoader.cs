@@ -43,6 +43,7 @@ public static class DotEnvLoader
 
             var key = line[..separatorIndex].Trim();
             var value = line[(separatorIndex + 1)..].Trim();
+            value = Unquote(value);
 
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -59,5 +60,27 @@ public static class DotEnvLoader
                 Environment.SetEnvironmentVariable(key, value);
             }
         }
+    }
+
+    private static string Unquote(string value)
+    {
+        if (value.Length >= 2)
+        {
+            var startsWithDouble = value.StartsWith('"');
+            var endsWithDouble = value.EndsWith('"');
+            if (startsWithDouble && endsWithDouble)
+            {
+                return value[1..^1];
+            }
+
+            var startsWithSingle = value.StartsWith('\'');
+            var endsWithSingle = value.EndsWith('\'');
+            if (startsWithSingle && endsWithSingle)
+            {
+                return value[1..^1];
+            }
+        }
+
+        return value;
     }
 }

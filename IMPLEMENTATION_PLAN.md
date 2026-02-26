@@ -150,7 +150,7 @@ Pachete minime:
 - `RequestBuilder` pentru payload-uri transcript/precheck/estimate.
 - `BatchPollingService` pentru `GET /transcripts/{batch_id}` până la stare finală.
 
-[Urmeaza]
+[In Proces]
 ## 6.3 Layer UI (POM)
 - Page Objects:
   - `LoginPage`
@@ -227,7 +227,7 @@ Tagging: `[Category("API")][Category("Smoke")]`
 
 Tagging: `[Category("API")][Category("Regression")]`
 
-[Urmeaza]
+[In Proces]
 ## 7.3 UI E2E — Chromium only
 
 Scenarii:
@@ -291,7 +291,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
-[Urmeaza]
+[In Proces]
 ## 10) CI/CD — GitHub Actions
 
 ## 10.1 Trigger-e
@@ -366,23 +366,23 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 - Implementare webhook registration/test/logs.
 - Implementare verificare HMAC + SSRF negative.
 
-[Urmeaza]
+[In Proces]
 ## Ziua 4 — UI E2E + hardening
 - Implementare Page Objects și flow-uri UI din task.
 - Screenshot la fail, trace opțional.
 - Tagging complet Smoke/Regression/Area.
 - Reducere flaky și optimizare waits.
 
-[Urmeaza]
+[In Proces]
 ## Ziua 5 — CI/CD + documentație finală
-- Workflow complet parametrizat (area/suite/threads).
-- Publicare Allure în GitHub Pages.
-- Pre-commit checks și scripturi locale.
-- README final: setup local, rulare CI, link raport live.
+- [Creat] Workflow complet parametrizat (area/suite/threads).
+- [Creat] Publicare Allure în GitHub Pages.
+- [Creat] Pre-commit checks și scripturi locale.
+- [Creat] README final: setup local, rulare CI, link raport live.
 
 ---
 
-[Urmeaza]
+[In Proces]
 ## 14) Definiție de Done (DoD)
 
 Un item este „Done” când:
@@ -414,7 +414,7 @@ Un item este „Done” când:
 ---
 
 [Urmeaza]
-## 16) Extensii bonus (după MVP)
+## 16) Extensii bonus (după MVP — opțional)
 
 - 2-3 scenarii Reqnroll/SpecFlow pentru demonstrat BDD.
 - Contract testing OpenAPI pe 1-2 endpoint-uri.
