@@ -227,7 +227,7 @@ Tagging: `[Category("API")][Category("Smoke")]`
 
 Tagging: `[Category("API")][Category("Regression")]`
 
-[In Proces]
+[Creat]
 ## 7.3 UI E2E — Chromium only
 
 Scenarii:
