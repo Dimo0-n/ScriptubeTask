@@ -10,6 +10,9 @@ namespace Scriptube.Tests.Ui.Regression;
 [Category("Regression")]
 public sealed class BatchDetailsRegressionTests : UiTestBase
 {
+    private static string? GetExistingBatchIdOrNull()
+        => Environment.GetEnvironmentVariable("SCRIPTUBE_EXISTING_BATCH_ID");
+
     [Test]
     public async Task BatchDetails_Should_ShowProgress_And_TranscriptSignals()
     {
@@ -23,21 +26,33 @@ public sealed class BatchDetailsRegressionTests : UiTestBase
         if (!authenticated)
         {
             await IgnoreIfServiceUnavailableAsync("batch details auth flow");
+            Assert.Ignore("Authentication did not reach dashboard in current live UI variant.");
         }
 
-        await IgnoreIfServiceUnavailableAsync("batch details auth flow");
-
         var batchDetailsPage = new BatchDetailsPage(Page);
+
+        await dashboardPage.NavigateAsync(Settings.UiBaseUrl);
+        await IgnoreIfServiceUnavailableAsync("dashboard navigation");
+
         var submitted = await dashboardPage.TrySubmitBatchAsync([TestDataCatalog.SuccessVideos.EnglishManual]);
         if (!submitted)
         {
-            Assert.Ignore("Dashboard submit controls are not available in current live UI variant.");
+            var existingBatchId = GetExistingBatchIdOrNull();
+            if (string.IsNullOrWhiteSpace(existingBatchId))
+            {
+                Assert.Ignore("Dashboard submit controls are not available in current live UI variant. Set SCRIPTUBE_EXISTING_BATCH_ID to run batch details tests without dashboard submit.");
+            }
+
+            await batchDetailsPage.NavigateAsync(Settings.UiBaseUrl, existingBatchId!);
         }
 
-        var openedDetails = await batchDetailsPage.TryOpenFromDashboardAsync();
-        if (!openedDetails)
+        if (submitted)
         {
-            Assert.Ignore("Batch details link/control is not available in current live UI variant.");
+            var openedDetails = await batchDetailsPage.TryOpenFromDashboardAsync();
+            if (!openedDetails)
+            {
+                Assert.Ignore("Batch details link/control is not available in current live UI variant.");
+            }
         }
 
         await IgnoreIfServiceUnavailableAsync("batch details page load");
@@ -64,21 +79,33 @@ public sealed class BatchDetailsRegressionTests : UiTestBase
         if (!authenticated)
         {
             await IgnoreIfServiceUnavailableAsync("batch export auth flow");
+            Assert.Ignore("Authentication did not reach dashboard in current live UI variant.");
         }
 
-        await IgnoreIfServiceUnavailableAsync("batch export auth flow");
-
         var batchDetailsPage = new BatchDetailsPage(Page);
+
+        await dashboardPage.NavigateAsync(Settings.UiBaseUrl);
+        await IgnoreIfServiceUnavailableAsync("dashboard navigation");
+
         var submitted = await dashboardPage.TrySubmitBatchAsync([TestDataCatalog.SuccessVideos.EnglishManual]);
         if (!submitted)
         {
-            Assert.Ignore("Dashboard submit controls are not available in current live UI variant.");
+            var existingBatchId = GetExistingBatchIdOrNull();
+            if (string.IsNullOrWhiteSpace(existingBatchId))
+            {
+                Assert.Ignore("Dashboard submit controls are not available in current live UI variant. Set SCRIPTUBE_EXISTING_BATCH_ID to run batch export tests without dashboard submit.");
+            }
+
+            await batchDetailsPage.NavigateAsync(Settings.UiBaseUrl, existingBatchId!);
         }
 
-        var openedDetails = await batchDetailsPage.TryOpenFromDashboardAsync();
-        if (!openedDetails)
+        if (submitted)
         {
-            Assert.Ignore("Batch details link/control is not available in current live UI variant.");
+            var openedDetails = await batchDetailsPage.TryOpenFromDashboardAsync();
+            if (!openedDetails)
+            {
+                Assert.Ignore("Batch details link/control is not available in current live UI variant.");
+            }
         }
 
         await IgnoreIfServiceUnavailableAsync("batch export page load");

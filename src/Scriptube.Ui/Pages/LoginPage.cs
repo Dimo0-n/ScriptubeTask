@@ -34,7 +34,7 @@ public sealed class LoginPage
 
     public async Task<bool> IsLoginFormVisibleAsync()
     {
-        var selectors = new[] { "input[type='email']", "input[name='email']", "#email" };
+        var selectors = new[] { "#email", "input[type='email']", "input[name='email']" };
         foreach (var selector in selectors)
         {
             if (await _page.Locator(selector).First.IsVisibleAsync())
@@ -48,15 +48,16 @@ public sealed class LoginPage
 
     public async Task LoginAsync(string email, string password, CancellationToken cancellationToken = default)
     {
-        await FillFirstAvailableAsync(["input[type='email']", "input[name='email']", "#email"], email);
-        await FillFirstAvailableAsync(["input[type='password']", "input[name='password']", "#password"], password);
+        await FillFirstAvailableAsync(["#email", "input[type='email']", "input[name='email']"], email);
+        await FillFirstAvailableAsync(["#password", "input[type='password']", "input[name='password']"], password);
 
         var beforeUrl = _page.Url;
         await ClickFirstAvailableAsync([
+            "#submit-btn",
             "button[type='submit']",
-            "button:has-text('Login')",
+            "button:has-text('Sign in')",
             "button:has-text('Log in')",
-            "button:has-text('Sign in')"
+            "button:has-text('Login')"
         ]);
 
         try
@@ -75,7 +76,7 @@ public sealed class LoginPage
 
         if (await IsLoginFormVisibleAsync())
         {
-            var passwordInput = _page.Locator("input[type='password'], input[name='password'], #password").First;
+            var passwordInput = _page.Locator("#password, input[type='password'], input[name='password']").First;
             try
             {
                 await passwordInput.PressAsync("Enter");
@@ -104,6 +105,9 @@ public sealed class LoginPage
     {
         var possibleErrors = new[]
         {
+            "#email-error",
+            "#password-error",
+            ".alert-error",
             "text=invalid",
             "text=incorrect",
             "text=failed",

@@ -11,33 +11,33 @@ public sealed class DashboardPage
         _page = page;
     }
 
+    public async Task NavigateAsync(string uiBaseUrl)
+    {
+        var dashboardUrl = $"{uiBaseUrl.TrimEnd('/')}/dashboard";
+        await _page.GotoAsync(dashboardUrl, new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
+    }
+
     public async Task<bool> IsLoadedAsync(int timeoutMs = 15000)
     {
         var start = DateTime.UtcNow;
         while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            if (_page.Url.Contains("dashboard", StringComparison.OrdinalIgnoreCase))
+            if (_page.Url.Contains("/ui/dashboard", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (IsAuthenticatedUrl(_page.Url))
+            // Use dashboard-specific anchors to avoid false positives on other /ui pages.
+            var anchors = new[]
             {
-                return true;
-            }
-
-            var possibleLocators = new[]
-            {
-                "textarea",
-                "text=Batch",
-                "text=Dashboard",
-                "text=Credits",
-                "a[href='/ui/logout']",
-                "text=Logout",
-                "text=API Keys"
+                "#submit-form",
+                "#urls",
+                "#submit-batch-btn",
+                "form[action='/ui/batches']",
+                "h2:has-text('Submit YouTube URLs')"
             };
 
-            foreach (var selector in possibleLocators)
+            foreach (var selector in anchors)
             {
                 try
                 {
@@ -57,22 +57,6 @@ public sealed class DashboardPage
         return false;
     }
 
-    private static bool IsAuthenticatedUrl(string url)
-    {
-        if (string.IsNullOrWhiteSpace(url))
-        {
-            return false;
-        }
-
-        if (!url.Contains("/ui", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        return !url.Contains("/ui/login", StringComparison.OrdinalIgnoreCase)
-               && !url.Contains("/ui/signup", StringComparison.OrdinalIgnoreCase);
-    }
-
     public async Task SubmitBatchAsync(IEnumerable<string> urls)
     {
         var submitted = await TrySubmitBatchAsync(urls);
@@ -84,27 +68,36 @@ public sealed class DashboardPage
 
     public async Task<bool> TrySubmitBatchAsync(IEnumerable<string> urls)
     {
+        // Wait for the SPA to fully render the form before probing for controls.
+        try { await _page.WaitForLoadStateAsync(LoadState.NetworkIdle, new PageWaitForLoadStateOptions { Timeout = 8000 }); } catch (PlaywrightException) { }
+
         var joinedUrls = string.Join(Environment.NewLine, urls);
 
         var textAreaSelectors = new[]
         {
-            "textarea",
+            "#urls",
+            "textarea#urls",
             "textarea[name='urls']",
             "textarea[placeholder*='YouTube']",
             "textarea[placeholder*='youtube']",
             "input[name='urls']",
             "input[placeholder*='YouTube']",
-            "[data-testid='urls-input']"
+            "[data-testid='urls-input']",
+            "textarea"
         };
 
         ILocator? textArea = null;
         foreach (var selector in textAreaSelectors)
         {
             var locator = _page.Locator(selector).First;
-            if (await locator.IsVisibleAsync())
+            try
             {
+                await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 2500 });
                 textArea = locator;
                 break;
+            }
+            catch (PlaywrightException)
+            {
             }
         }
 
@@ -117,6 +110,8 @@ public sealed class DashboardPage
 
         var submitSelectors = new[]
         {
+            "#submit-batch-btn",
+            "button:has-text('Get Transcripts')",
             "button:has-text('Submit')",
             "button:has-text('Create Batch')",
             "button:has-text('Process')",
@@ -126,10 +121,17 @@ public sealed class DashboardPage
         foreach (var selector in submitSelectors)
         {
             var button = _page.Locator(selector).First;
-            if (await button.IsVisibleAsync())
+            try
             {
-                await button.ClickAsync();
-                return true;
+                await button.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 2500 });
+                if (await button.IsEnabledAsync())
+                {
+                    await button.ClickAsync();
+                    return true;
+                }
+            }
+            catch (PlaywrightException)
+            {
             }
         }
 
@@ -138,8 +140,16 @@ public sealed class DashboardPage
 
     public async Task<bool> HasBatchCreatedSignalAsync()
     {
+        if (_page.Url.Contains("/ui/batches/", StringComparison.OrdinalIgnoreCase)
+            || _page.Url.Contains("/ui/batch/", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         var signals = new[]
         {
+            "tr[data-batch-id]",
+            "tr[data-batch-status]",
             "text=processing",
             "text=queued",
             "text=batch",

@@ -35,14 +35,23 @@ public sealed class CreditsPage
         var start = DateTime.UtcNow;
         while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            if (_page.Url.Contains("/credits", StringComparison.OrdinalIgnoreCase)
-                || _page.Url.Contains("/billing", StringComparison.OrdinalIgnoreCase)
-                || _page.Url.Contains("/plans", StringComparison.OrdinalIgnoreCase))
+            if (_page.Url.Contains("/ui/credits", StringComparison.OrdinalIgnoreCase)
+                || _page.Url.Contains("/ui/billing", StringComparison.OrdinalIgnoreCase)
+                || _page.Url.Contains("/ui/plans", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            var anchors = new[] { "text=Credits", "text=Balance", "text=credit", "text=Top up", "text=Buy" };
+            var anchors = new[]
+            {
+                "h1:has-text('Credits')",
+                ".credit-summary",
+                ".summary-card.balance",
+                "text=Credits",
+                "text=Balance",
+                "text=credit",
+                "text=Buy"
+            };
             foreach (var selector in anchors)
             {
                 try
@@ -63,57 +72,70 @@ public sealed class CreditsPage
         return false;
     }
 
-    public async Task<bool> HasBalanceAsync()
+    public async Task<bool> HasBalanceAsync(int timeoutMs = 8000)
     {
         var selectors = new[]
         {
+            ".summary-card.balance .card-value",
             "text=Balance",
             "text=credits",
             "[data-testid='credits-balance']",
             "text=/\\d+\\s*credits/i"
         };
 
-        foreach (var selector in selectors)
+        var start = DateTime.UtcNow;
+        while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            try
+            foreach (var selector in selectors)
             {
-                if (await _page.Locator(selector).First.IsVisibleAsync())
+                try
                 {
-                    return true;
+                    if (await _page.Locator(selector).First.IsVisibleAsync())
+                    {
+                        return true;
+                    }
+                }
+                catch (PlaywrightException)
+                {
                 }
             }
-            catch (PlaywrightException)
-            {
-            }
+
+            await Task.Delay(300);
         }
 
         return false;
     }
 
-    public async Task<bool> HasPackOptionsAsync()
+    public async Task<bool> HasPackOptionsAsync(int timeoutMs = 8000)
     {
         var selectors = new[]
         {
+            ".credit-packs-grid",
+            ".pack-card",
+            "text=Buy More Credits",
             "text=Buy",
-            "text=Top up",
-            "text=package",
             "text=pack",
-            "text=Pro",
             "text=credits"
         };
 
-        foreach (var selector in selectors)
+        var start = DateTime.UtcNow;
+        while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            try
+            foreach (var selector in selectors)
             {
-                if (await _page.Locator(selector).First.IsVisibleAsync())
+                try
                 {
-                    return true;
+                    if (await _page.Locator(selector).First.IsVisibleAsync())
+                    {
+                        return true;
+                    }
+                }
+                catch (PlaywrightException)
+                {
                 }
             }
-            catch (PlaywrightException)
-            {
-            }
+
+            await Task.Delay(300);
         }
 
         return false;

@@ -20,6 +20,7 @@ public sealed class SignupPage
     public async Task<bool> IsLoadedAsync()
     {
         return await _page.Locator("text=Sign up").First.IsVisibleAsync()
+               || await _page.Locator("text=Create account").First.IsVisibleAsync()
                || await _page.Locator("button[type='submit']").First.IsVisibleAsync();
     }
 }

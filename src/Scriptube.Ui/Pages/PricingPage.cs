@@ -22,12 +22,19 @@ public sealed class PricingPage
         var start = DateTime.UtcNow;
         while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            if (_page.Url.Contains("/pricing", StringComparison.OrdinalIgnoreCase))
+            if (_page.Url.Contains("/ui/pricing", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            var anchors = new[] { "text=Pricing", "text=Plan", "text=Free", "text=Pro" };
+            var anchors = new[]
+            {
+                "h1:has-text('Simple, transparent pricing')",
+                "text=Pricing",
+                "text=Plan",
+                "text=Free",
+                "text=Pro"
+            };
             foreach (var selector in anchors)
             {
                 try
@@ -54,7 +61,8 @@ public sealed class PricingPage
         {
             "text=Free",
             "text=Pro",
-            "text=Enterprise",
+            "text=Business",
+            "text=Unlimited",
             "text=month",
             "[data-testid='plan-card']"
         };

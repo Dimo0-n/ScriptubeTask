@@ -11,23 +11,35 @@ public sealed class BatchDetailsPage
         _page = page;
     }
 
+    public async Task NavigateAsync(string uiBaseUrl, string batchId)
+    {
+        if (string.IsNullOrWhiteSpace(batchId))
+        {
+            throw new ArgumentException("Batch id must be provided.", nameof(batchId));
+        }
+
+        var url = $"{uiBaseUrl.TrimEnd('/')}/batches/{batchId.Trim()}";
+        await _page.GotoAsync(url, new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
+    }
+
     public async Task<bool> IsLoadedAsync(int timeoutMs = 15000)
     {
         var start = DateTime.UtcNow;
         while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
         {
-            if (_page.Url.Contains("/batch", StringComparison.OrdinalIgnoreCase)
-                || _page.Url.Contains("/batches/", StringComparison.OrdinalIgnoreCase))
+            if (_page.Url.Contains("/ui/batches/", StringComparison.OrdinalIgnoreCase)
+                || _page.Url.Contains("/ui/batch/", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
             var anchors = new[]
             {
-                "text=Batch details",
-                "text=Status",
-                "text=Transcript",
-                "text=Export"
+                "text=Batch #",
+                "text=Back to dashboard",
+                "text=Export TXT",
+                "text=Export CSV",
+                "text=Export JSONL"
             };
 
             foreach (var selector in anchors)
@@ -52,7 +64,17 @@ public sealed class BatchDetailsPage
 
     public async Task<bool> HasProgressSignalAsync()
     {
-        var selectors = new[] { "text=queued", "text=processing", "text=completed", "text=failed", "text=progress" };
+        var selectors = new[]
+        {
+            "span.badge",
+            "text=queued",
+            "text=processing",
+            "text=completed",
+            "text=failed",
+            "text=progress",
+            "text=Total items",
+            "text=Completed"
+        };
         foreach (var selector in selectors)
         {
             if (await _page.Locator(selector).First.IsVisibleAsync())
@@ -68,10 +90,10 @@ public sealed class BatchDetailsPage
     {
         var selectors = new[]
         {
-            "text=Items",
-            "text=Preview",
+            ".transcript-preview",
+            "text=Copy Transcript",
             "text=Transcript",
-            "[data-testid='transcript-preview']",
+            "text=Items",
             "pre"
         };
 
@@ -98,6 +120,7 @@ public sealed class BatchDetailsPage
         {
             "a[href*='/ui/batch/']",
             "a[href*='/ui/batches/']",
+            "tr[data-batch-id] a",
             "a:has-text('View')",
             "a:has-text('Details')",
             "button:has-text('View')",
@@ -133,28 +156,30 @@ public sealed class BatchDetailsPage
     public async Task ExportJsonAsync()
     {
         await ClickFirstVisibleAsync(
-            "a:has-text('JSON')",
-            "button:has-text('JSON')",
-            "a[href*='format=json']",
-            "a[href*='/export?format=json']");
+            "a:has-text('JSONL')",
+            "button:has-text('JSONL')",
+            "a[href*='fmt=jsonl']",
+            "a[href*='/export?fmt=jsonl']");
     }
 
     public async Task ExportTxtAsync()
     {
         await ClickFirstVisibleAsync(
+            "a:has-text('Export TXT')",
             "a:has-text('TXT')",
             "button:has-text('TXT')",
-            "a[href*='format=txt']",
-            "a[href*='/export?format=txt']");
+            "a[href*='fmt=txt']",
+            "a[href*='/export?fmt=txt']");
     }
 
     public async Task ExportSrtAsync()
     {
         await ClickFirstVisibleAsync(
-            "a:has-text('SRT')",
-            "button:has-text('SRT')",
-            "a[href*='format=srt']",
-            "a[href*='/export?format=srt']");
+            "a:has-text('Export CSV')",
+            "a:has-text('CSV')",
+            "button:has-text('CSV')",
+            "a[href*='fmt=csv']",
+            "a[href*='/export?fmt=csv']");
     }
 
     private async Task ClickFirstVisibleAsync(params string[] selectors)

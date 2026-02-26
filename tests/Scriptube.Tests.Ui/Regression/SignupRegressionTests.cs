@@ -24,8 +24,8 @@ public sealed class SignupRegressionTests : UiTestBase
         var uniqueEmail = $"scriptube.auto+{Guid.NewGuid():N}@example.com";
         var password = "P@ssw0rd-" + Guid.NewGuid().ToString("N")[..6];
 
-        var emailInput = Page.Locator("input[type='email'], input[name='email'], #email").First;
-        var passwordInput = Page.Locator("input[type='password'], input[name='password'], #password").First;
+        var emailInput = Page.Locator("#email, input[type='email'], input[name='email']").First;
+        var passwordInput = Page.Locator("#password, input[type='password'], input[name='password']").First;
 
         if (!await emailInput.IsVisibleAsync() || !await passwordInput.IsVisibleAsync())
         {
@@ -35,7 +35,7 @@ public sealed class SignupRegressionTests : UiTestBase
         await emailInput.FillAsync(uniqueEmail);
         await passwordInput.FillAsync(password);
 
-        var submitButton = Page.Locator("button[type='submit'], button:has-text('Sign up'), button:has-text('Create account')").First;
+        var submitButton = Page.Locator("#submit-btn, button[type='submit'], button:has-text('Create account'), button:has-text('Sign up')").First;
         if (!await submitButton.IsVisibleAsync())
         {
             Assert.Ignore("Signup submit control is not available in current live UI variant.");
@@ -70,8 +70,8 @@ public sealed class SignupRegressionTests : UiTestBase
 
         (await signupPage.IsLoadedAsync()).Should().BeTrue();
 
-        var emailInput = Page.Locator("input[type='email'], input[name='email'], #email").First;
-        var passwordInput = Page.Locator("input[type='password'], input[name='password'], #password").First;
+        var emailInput = Page.Locator("#email, input[type='email'], input[name='email']").First;
+        var passwordInput = Page.Locator("#password, input[type='password'], input[name='password']").First;
 
         if (!await emailInput.IsVisibleAsync() || !await passwordInput.IsVisibleAsync())
         {
@@ -81,7 +81,7 @@ public sealed class SignupRegressionTests : UiTestBase
         await emailInput.FillAsync(credentials.Email);
         await passwordInput.FillAsync(credentials.Password);
 
-        var submitButton = Page.Locator("button[type='submit'], button:has-text('Sign up'), button:has-text('Create account')").First;
+        var submitButton = Page.Locator("#submit-btn, button[type='submit'], button:has-text('Create account'), button:has-text('Sign up')").First;
         if (!await submitButton.IsVisibleAsync())
         {
             Assert.Ignore("Signup submit control is not available in current live UI variant.");
@@ -93,6 +93,9 @@ public sealed class SignupRegressionTests : UiTestBase
 
         var possibleErrorSelectors = new[]
         {
+            "#email-error",
+            "#password-error",
+            ".alert-error",
             "text=already registered",
             "text=already exists",
             "text=duplicate",
