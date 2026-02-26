@@ -15,6 +15,7 @@ public sealed class WebhookRegistrationClient
     public Task<HttpResponseMessage> RegisterAsync(
         string url,
         IReadOnlyCollection<string> events,
+        string secret,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -27,10 +28,16 @@ public sealed class WebhookRegistrationClient
             throw new ArgumentException("At least one webhook event is required.", nameof(events));
         }
 
+        if (string.IsNullOrWhiteSpace(secret) || secret.Trim().Length < 16)
+        {
+            throw new ArgumentException("Webhook secret is required and must be at least 16 characters.", nameof(secret));
+        }
+
         var request = new
         {
             url,
-            events
+            events,
+            secret = secret.Trim()
         };
 
         return _httpClient.PostAsJsonAsync("/api/webhooks/register", request, cancellationToken);

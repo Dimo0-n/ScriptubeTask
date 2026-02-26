@@ -9,4 +9,7 @@ public sealed class WebhookRegisterRequest
 
     [JsonPropertyName("events")]
     public IReadOnlyCollection<string>? Events { get; init; }
+
+    [JsonPropertyName("secret")]
+    public required string Secret { get; init; }
 }

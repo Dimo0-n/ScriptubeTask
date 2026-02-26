@@ -22,6 +22,8 @@ public sealed class ScriptubeSettings
 public sealed class ScriptubeWebhookSettings
 {
     public string ListenerBaseUrl { get; set; } = string.Empty;
+
+    public string Secret { get; set; } = string.Empty;
 }
 
 public sealed class ScriptubeCredentials

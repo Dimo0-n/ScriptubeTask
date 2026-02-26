@@ -44,6 +44,22 @@ public abstract class WebhookTestBase : ScriptubeTestBase
         return webhookUrl;
     }
 
+    protected string RequireWebhookSecretOrIgnore()
+    {
+        var secret = Environment.GetEnvironmentVariable("SCRIPTUBE_WEBHOOK_SECRET");
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            secret = Settings.Webhook.Secret;
+        }
+
+        if (string.IsNullOrWhiteSpace(secret) || secret.Trim().Length < 16)
+        {
+            Assert.Ignore("Set SCRIPTUBE_WEBHOOK_SECRET (>=16 chars) or Scriptube:Webhook:Secret to run webhook registration/signature flows.");
+        }
+
+        return secret.Trim();
+    }
+
     protected HttpClient CreateAuthenticatedClient()
     {
         var apiKey = RequireApiKey();

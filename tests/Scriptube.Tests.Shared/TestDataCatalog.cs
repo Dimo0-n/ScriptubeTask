@@ -9,6 +9,9 @@ public static class TestDataCatalog
         public const string KoreanOnly = "https://www.youtube.com/watch?v=tstKOONL001";
         public const string SpanishOnly = "https://www.youtube.com/watch?v=tstESAUT001";
         public const string MultiLanguage = "https://www.youtube.com/watch?v=tstMULTI001";
+        public const string NoCaptions = "https://www.youtube.com/watch?v=tstNOCAP001";
+        public const string ElevenLabsForced = "https://www.youtube.com/watch?v=tstELABS001";
+        public const string ElevenLabsWithTranslation = "https://www.youtube.com/watch?v=tstELTRN001";
     }
 
     public static class ErrorVideos
