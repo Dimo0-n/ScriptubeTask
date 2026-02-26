@@ -1,6 +1,6 @@
 # Plan de implementare detaliat — Scriptube Test Automation Framework
 
-[In Proces]
+[Creat]
 ## 1) Scop și rezultat urmărit
 
 Acest plan definește implementarea unui framework de automatizare în **C# / .NET 8+** pentru Scriptube, cu acoperire pe:
@@ -126,7 +126,7 @@ Pachete minime:
 
 ---
 
-[In Proces]
+[Creat]
 ## 6) Design intern framework
 
 [Creat]
@@ -162,12 +162,12 @@ Pachete minime:
 - [Creat] `UiFlow` wrappers pentru scenarii complete (ex. login + submit batch).
 - [Creat] Screenshot automat la fail în teardown.
 
-[In Proces]
+[Creat]
 ## 6.4 Layer Webhooks
-- `WebhookRegistrationClient`
-- `WebhookDeliveryVerifier`
-- `HmacSignatureVerifier` (HMAC-SHA256)
-- `WebhookTestListener` (mock receiver HTTP local/extern controlat)
+- [Creat] `WebhookRegistrationClient`
+- [Creat] `WebhookDeliveryVerifier`
+- [Creat] `HmacSignatureVerifier` (HMAC-SHA256)
+- [Creat] `WebhookTestListener` (mock receiver HTTP local/extern controlat)
 
 ---
 
@@ -359,7 +359,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 - Implementare smoke suite API + primele negative.
 - Validare locală + stabilizare.
 
-[In Proces]
+[Creat]
 ## Ziua 3 — API regression + Webhooks
 - [Creat] Completare endpoint-uri API restante.
 - [Creat] Fluxuri cancel/retry/rerun/delete.

@@ -1,8 +1,7 @@
 using System.Net;
-using System.Text.Json;
 using FluentAssertions;
 using Scriptube.Api.Clients;
-using Scriptube.Api.Contracts;
+using Scriptube.Webhooks.Clients;
 
 namespace Scriptube.Tests.Webhooks.Regression;
 
@@ -18,15 +17,9 @@ public sealed class WebhookApiRegressionTests : WebhookTestBase
         var webhookUrl = RequireWebhookUrlOrIgnore();
 
         using var client = CreateAuthenticatedClient();
-        var webhooksClient = new WebhooksClient(client);
+        var registrationClient = new WebhookRegistrationClient(client);
 
-        var request = new WebhookRegisterRequest
-        {
-            Url = webhookUrl,
-            Events = ["batch.completed"]
-        };
-
-        using var response = await webhooksClient.RegisterAsync(request);
+        using var response = await registrationClient.RegisterAsync(webhookUrl, ["batch.completed"]);
         IgnoreIfEndpointUnavailable(response, "/api/webhooks/register");
         response.StatusCode.Should().BeOneOf(HttpStatusCode.Created, HttpStatusCode.OK);
     }
@@ -37,15 +30,9 @@ public sealed class WebhookApiRegressionTests : WebhookTestBase
         RequireLiveApi();
 
         using var client = CreateAuthenticatedClient();
-        var webhooksClient = new WebhooksClient(client);
+        var registrationClient = new WebhookRegistrationClient(client);
 
-        var request = new WebhookRegisterRequest
-        {
-            Url = "http://localhost/test",
-            Events = ["batch.completed"]
-        };
-
-        using var response = await webhooksClient.RegisterAsync(request);
+        using var response = await registrationClient.RegisterAsync("http://localhost/test", ["batch.completed"]);
         IgnoreIfEndpointUnavailable(response, "/api/webhooks/register");
         response.StatusCode.Should().BeOneOf(HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity, HttpStatusCode.Forbidden);
     }
@@ -70,22 +57,17 @@ public sealed class WebhookApiRegressionTests : WebhookTestBase
         var webhookUrl = RequireWebhookUrlOrIgnore();
 
         using var client = CreateAuthenticatedClient();
+        var registrationClient = new WebhookRegistrationClient(client);
         var webhooksClient = new WebhooksClient(client);
 
-        var registerRequest = new WebhookRegisterRequest
-        {
-            Url = webhookUrl,
-            Events = ["batch.completed"]
-        };
-
         string webhookId;
-        using (var registerResponse = await webhooksClient.RegisterAsync(registerRequest))
+        using (var registerResponse = await registrationClient.RegisterAsync(webhookUrl, ["batch.completed"]))
         {
             IgnoreIfEndpointUnavailable(registerResponse, "/api/webhooks/register");
             registerResponse.StatusCode.Should().BeOneOf(HttpStatusCode.Created, HttpStatusCode.OK);
 
             var body = await registerResponse.Content.ReadAsStringAsync();
-            webhookId = ExtractWebhookId(body);
+            webhookId = WebhookRegistrationClient.ExtractWebhookIdOrThrow(body);
         }
 
         using (var triggerResponse = await webhooksClient.TriggerTestAsync(webhookId))
@@ -111,37 +93,5 @@ public sealed class WebhookApiRegressionTests : WebhookTestBase
             IgnoreIfEndpointUnavailable(deleteResponse, "DELETE /api/webhooks/{webhook_id}");
             deleteResponse.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.NoContent, HttpStatusCode.Accepted, HttpStatusCode.NotFound);
         }
-    }
-
-    private static string ExtractWebhookId(string json)
-    {
-        using var document = JsonDocument.Parse(json);
-        if (TryGetString(document.RootElement, "webhook_id", out var webhookId) ||
-            TryGetString(document.RootElement, "id", out webhookId))
-        {
-            return webhookId!;
-        }
-
-        throw new AssertionException("Webhook register response does not include webhook id.");
-    }
-
-    private static bool TryGetString(JsonElement element, string propertyName, out string? value)
-    {
-        value = null;
-        if (element.ValueKind != JsonValueKind.Object)
-        {
-            return false;
-        }
-
-        foreach (var property in element.EnumerateObject())
-        {
-            if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase) && property.Value.ValueKind == JsonValueKind.String)
-            {
-                value = property.Value.GetString();
-                return !string.IsNullOrWhiteSpace(value);
-            }
-        }
-
-        return false;
     }
 }
