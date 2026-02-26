@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Scriptube.Api\Scriptube.Api.csproj" />
     <ProjectReference Include="..\..\src\Scriptube.Webhooks\Scriptube.Webhooks.csproj" />
     <ProjectReference Include="..\..\src\Scriptube.Core\Scriptube.Core.csproj" />
     <ProjectReference Include="..\Scriptube.Tests.Shared\Scriptube.Tests.Shared.csproj" />

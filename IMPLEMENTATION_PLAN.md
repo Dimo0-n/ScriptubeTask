@@ -162,7 +162,7 @@ Pachete minime:
 - `UiFlow` wrappers pentru scenarii complete (ex. login + submit batch).
 - Screenshot automat la fail în teardown.
 
-[Urmeaza]
+[In Proces]
 ## 6.4 Layer Webhooks
 - `WebhookRegistrationClient`
 - `WebhookDeliveryVerifier`
@@ -243,7 +243,7 @@ Scenarii:
 
 Tagging: `[Category("UI")]` + `Smoke/Regression` după criticitate.
 
-[Urmeaza]
+[In Proces]
 ## 7.4 Webhooks
 
 Scenarii:
