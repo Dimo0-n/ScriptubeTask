@@ -75,7 +75,7 @@ Scriptube.Tests.sln
 
 ---
 
-[In Proces]
+[Creat]
 ## 4) Stack tehnic și pachete NuGet
 
 - **Test runner**: NUnit (alegere recomandată pentru categorii `[Category]`)
@@ -150,17 +150,17 @@ Pachete minime:
 - `RequestBuilder` pentru payload-uri transcript/precheck/estimate.
 - `BatchPollingService` pentru `GET /transcripts/{batch_id}` până la stare finală.
 
-[In Proces]
+[Creat]
 ## 6.3 Layer UI (POM)
 - Page Objects:
-  - `LoginPage`
-  - `SignupPage`
-  - `DashboardPage`
-  - `BatchDetailsPage`
-  - `CreditsPage`
-  - `PricingPage`
-- `UiFlow` wrappers pentru scenarii complete (ex. login + submit batch).
-- Screenshot automat la fail în teardown.
+  - [Creat] `LoginPage`
+  - [Creat] `SignupPage`
+  - [Creat] `DashboardPage`
+  - [Creat] `BatchDetailsPage`
+  - [Creat] `CreditsPage`
+  - [Creat] `PricingPage`
+- [Creat] `UiFlow` wrappers pentru scenarii complete (ex. login + submit batch).
+- [Creat] Screenshot automat la fail în teardown.
 
 [In Proces]
 ## 6.4 Layer Webhooks
@@ -273,7 +273,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
-[In Proces]
+[Creat]
 ## 9) Logging și raportare (Allure)
 
 ## 9.1 Ce se atașează per test
@@ -291,7 +291,7 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 
 ---
 
-[In Proces]
+[Creat]
 ## 10) CI/CD — GitHub Actions
 
 ## 10.1 Trigger-e
@@ -363,17 +363,17 @@ Tagging: `[Category("Webhook")][Category("Regression")]`, plus smoke pentru scen
 ## Ziua 3 — API regression + Webhooks
 - [Creat] Completare endpoint-uri API restante.
 - [Creat] Fluxuri cancel/retry/rerun/delete.
-- Implementare webhook registration/test/logs.
-- Implementare verificare HMAC + SSRF negative.
+- [Creat] Implementare webhook registration/test/logs.
+- [Creat] Implementare verificare HMAC + SSRF negative.
 
 [In Proces]
 ## Ziua 4 — UI E2E + hardening
-- Implementare Page Objects și flow-uri UI din task.
-- Screenshot la fail, trace opțional.
-- Tagging complet Smoke/Regression/Area.
-- Reducere flaky și optimizare waits.
+- [In Proces] Implementare Page Objects și flow-uri UI din task.
+- [Creat] Screenshot la fail, trace opțional.
+- [Creat] Tagging complet Smoke/Regression/Area.
+- [In Proces] Reducere flaky și optimizare waits.
 
-[In Proces]
+[Creat]
 ## Ziua 5 — CI/CD + documentație finală
 - [Creat] Workflow complet parametrizat (area/suite/threads).
 - [Creat] Publicare Allure în GitHub Pages.

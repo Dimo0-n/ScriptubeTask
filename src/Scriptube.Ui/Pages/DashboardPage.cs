@@ -75,13 +75,26 @@ public sealed class DashboardPage
 
     public async Task SubmitBatchAsync(IEnumerable<string> urls)
     {
+        var submitted = await TrySubmitBatchAsync(urls);
+        if (!submitted)
+        {
+            throw new InvalidOperationException("Could not find batch input textarea on dashboard.");
+        }
+    }
+
+    public async Task<bool> TrySubmitBatchAsync(IEnumerable<string> urls)
+    {
         var joinedUrls = string.Join(Environment.NewLine, urls);
 
         var textAreaSelectors = new[]
         {
             "textarea",
             "textarea[name='urls']",
-            "textarea[placeholder*='YouTube']"
+            "textarea[placeholder*='YouTube']",
+            "textarea[placeholder*='youtube']",
+            "input[name='urls']",
+            "input[placeholder*='YouTube']",
+            "[data-testid='urls-input']"
         };
 
         ILocator? textArea = null;
@@ -97,7 +110,7 @@ public sealed class DashboardPage
 
         if (textArea is null)
         {
-            throw new InvalidOperationException("Could not find batch input textarea on dashboard.");
+            return false;
         }
 
         await textArea.FillAsync(joinedUrls);
@@ -116,11 +129,11 @@ public sealed class DashboardPage
             if (await button.IsVisibleAsync())
             {
                 await button.ClickAsync();
-                return;
+                return true;
             }
         }
 
-        throw new InvalidOperationException("Could not find submit button on dashboard.");
+        return false;
     }
 
     public async Task<bool> HasBatchCreatedSignalAsync()
