@@ -131,7 +131,6 @@ jobs:
           fi
 
           dotnet "${DOTNET_ARGS[@]}"
-        continue-on-error: true
 
       - name: Upload test results (TRX)
         if: always()

@@ -113,6 +113,7 @@ Pachete minime:
 - `Scriptube:PollingTimeoutSeconds`
 - `Scriptube:RetryCount`
 - `Scriptube:Webhook:ListenerBaseUrl`
+- `Scriptube:Webhook:Secret`
 - `Scriptube:Credentials:Email`
 - `Scriptube:Credentials:Password`
 
@@ -120,6 +121,8 @@ Pachete minime:
 - `SCRIPTUBE_API_KEY`
 - `SCRIPTUBE_EMAIL`
 - `SCRIPTUBE_PASSWORD`
+- `SCRIPTUBE_WEBHOOK_SECRET`
+- `SCRIPTUBE_WEBHOOK_TEST_URL`
 - eventual `SCRIPTUBE_BYOK_KEY` (dacă e necesar pentru scenarii)
 
 **Regulă**: niciun secret în cod/fișiere versionate.
@@ -391,6 +394,7 @@ Un item este „Done” când:
 - Request/response logs apar în Allure.
 - UI failures au screenshot atașat.
 - Nu există hardcodări de secrete/date sensibile.
+- Variabilele de rulare live sunt aliniate (`RUN_LIVE_API`, `RUN_LIVE_UI`, `RUN_LIVE_WEBHOOKS`).
 - `dotnet format` și `dotnet build --warnaserror` trec.
 - README și workflow-urile sunt actualizate.
 

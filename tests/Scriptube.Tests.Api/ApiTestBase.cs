@@ -30,9 +30,13 @@ public abstract class ApiTestBase : ScriptubeTestBase
 
     protected void RequireLiveApi()
     {
-        if (!string.Equals(Environment.GetEnvironmentVariable("RUN_LIVE_SCRIPTUBE"), "true", StringComparison.OrdinalIgnoreCase))
+        var runLiveApi = Environment.GetEnvironmentVariable("RUN_LIVE_API");
+        var runLiveScriptube = Environment.GetEnvironmentVariable("RUN_LIVE_SCRIPTUBE");
+
+        if (!string.Equals(runLiveApi, "true", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(runLiveScriptube, "true", StringComparison.OrdinalIgnoreCase))
         {
-            Assert.Ignore("Set RUN_LIVE_SCRIPTUBE=true to run live Scriptube API tests.");
+            Assert.Ignore("Set RUN_LIVE_API=true (or RUN_LIVE_SCRIPTUBE=true) to run live Scriptube API tests.");
         }
     }
 
